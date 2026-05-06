@@ -1,38 +1,11 @@
-Django==6.0.4                  # Ana web framework (ORM, admin, auth, template).
-djangorestframework==3.17.1    # REST API katmanı (ViewSet, Serializer, Token auth).
-djangorestframework-simplejwt==5.5.1  # JWT (access + refresh, blacklist) — SPA/mobile auth.
-PyJWT==2.12.1                  # simplejwt'nin alt bağımlılığı (JWT imzalama).
-django-filter==25.2            # DRF filtre backend'i (?status=OPEN, ?created_at__gte=...).
-drf-spectacular==0.29.0        # OpenAPI 3.0 + Swagger UI/ReDoc dokümantasyonu.
-django-cors-headers==4.9.0     # CORS başlıkları; SPA/mobile API erişimi için.
-asgiref==3.11.1                # Django'nun async/sync köprüsü (Django bağımlılığı).
-sqlparse==0.5.5                # SQL formatlama; Django debug ve migration çıktıları.
-psycopg2-binary==2.9.11        # PostgreSQL sürücüsü (config/settings.py içinde aktif).
-python-dotenv==1.2.2           # .env dosyasından SECRET_KEY ve DB bilgilerini yükler.
-openpyxl==3.1.5                # XLSX okuma/yazma; rapor dışa aktarımında kullanılır.
-et_xmlfile==2.0.0              # openpyxl'in XML akışı için bağımlılığı.
-pillow==12.2.0                 # Görsel işleme; Django ImageField + WeasyPrint resim gömme.
-tinycss2==1.5.1                # Hafif CSS parser (WeasyPrint bağımlılığı).
-cssselect2==0.9.0              # CSS seçici parser; WeasyPrint stillendirme için.
-
-# === drf-spectacular alt bağımlılıkları ===
-PyYAML==6.0.3                  # OpenAPI şema YAML üretimi.
-inflection==0.5.1              # CamelCase ↔ snake_case (operationId üretimi).
-jsonschema==4.26.0             # OpenAPI şema doğrulama.
-jsonschema-specifications==2025.9.1
-referencing==0.37.0
-rpds-py==0.30.0
-attrs==26.1.0
-uritemplate==4.2.0             # URI template parser (path parametreleri için).
-
-# === WeasyPrint — HTML/CSS'den PDF üretimi (reports/views.py export_pdf) ===
-weasyprint==68.1               # Ana PDF kütüphanesi; xhtml2pdf'in yerini aldı.
-pydyf==0.12.1                  # WeasyPrint'in düşük seviyeli PDF yazma motoru.
-tinyhtml5==2.1.0               # WeasyPrint'in HTML5 parser'ı.
-pyphen==0.17.2                 # Heceleme kütüphanesi (WeasyPrint tipografi).
-fonttools==4.62.1              # Font okuma/yazma (WeasyPrint WOFF2 desteği).
-brotli==1.2.0                  # WOFF2 font sıkıştırma (fonttools bağımlılığı).
-zopfli==0.4.1                  # Zopfli sıkıştırma (fonttools bağımlılığı).
-cffi==2.0.0                    # C kütüphanelerine FFI köprüsü (WeasyPrint bağımlılığı).
-pycparser==3.0                 # C başlık dosyası parser'ı (cffi bağımlılığı).
-webencodings==0.5.1            # Karakter kodlama tabloları (cssselect2 bağımlılığı).
+Django==6.0.4
+djangorestframework==3.17.1
+djangorestframework-simplejwt==5.5.1
+django-filter==25.2
+drf-spectacular==0.29.0
+django-cors-headers==4.9.0
+psycopg2-binary==2.9.11
+python-dotenv==1.2.2
+openpyxl==3.1.5
+pillow==12.2.0
+weasyprint==68.1

@@ -1,7 +1,20 @@
 from rest_framework import serializers
 
-from identity.serializers import UserShortSerializer
-from .models import Ticket, TicketComment, TicketHistory, TicketAttachment, Tag
+from identity.models import User
+from .models import Ticket, TicketComment, TicketHistory, TicketAttachment, Tag, Status as TicketStatus
+
+
+
+# Kısa kullanıcı referansı — bilet nested alanlarında kullanılır
+class UserShortSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'full_name']
+
+    def get_full_name(self, obj) -> str:
+        return obj.get_full_name() or obj.username
 
 
 # Etiket serializer'ı
@@ -90,6 +103,7 @@ def _validate_category_department(attrs, instance=None):
 
 # Bilet oluşturma serializer'ı — çoklu dosya yüklemesi destekler
 class TicketCreateSerializer(serializers.ModelSerializer):
+    sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
     attachments = serializers.ListField(
         child=serializers.FileField(),
         required=False,
@@ -98,7 +112,7 @@ class TicketCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ['subject', 'message', 'department', 'category', 'priority', 'tags', 'attachments']
+        fields = ['subject', 'message', 'department', 'category', 'priority', 'tags', 'attachments', 'sender']
 
     def validate(self, attrs):
         _validate_category_department(attrs)
@@ -114,6 +128,8 @@ class TicketCreateSerializer(serializers.ModelSerializer):
 
 # Bilet güncelleme serializer'ı — yeni dosyalar mevcut listeye eklenir
 class TicketUpdateSerializer(serializers.ModelSerializer):
+    status = serializers.ChoiceField(choices=TicketStatus.choices, required=False)
+    assigned_to = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, allow_null=True)
     attachments = serializers.ListField(
         child=serializers.FileField(),
         required=False,
@@ -122,7 +138,7 @@ class TicketUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ticket
-        fields = ['subject', 'message', 'department', 'category', 'priority', 'tags', 'attachments']
+        fields = ['subject', 'message', 'department', 'category', 'priority', 'tags', 'attachments', 'status', 'assigned_to']
 
     def validate(self, attrs):
         _validate_category_department(attrs, instance=self.instance)

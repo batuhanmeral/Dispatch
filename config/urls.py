@@ -7,8 +7,6 @@ from drf_spectacular.views import (
     SpectacularAPIView, SpectacularSwaggerView, SpectacularRedocView,
 )
 
-from identity.api_urls import auth_urlpatterns, user_urlpatterns
-
 urlpatterns = [
     path('admin/', admin.site.urls),
 
@@ -23,14 +21,8 @@ urlpatterns = [
     path('notifications/', include('notifications.urls')),
     path('reports/', include('reports.urls')),
 
-    # REST API v1
-    path('api/v1/auth/', include((auth_urlpatterns, 'api_auth'))),
-    path('api/v1/users/', include((user_urlpatterns, 'api_users'))),
-    path('api/v1/departments/', include(('departments.api_urls', 'api_departments'))),
+    # REST API URL'leri (Sadece Mikroservis Ticket İşlemleri)
     path('api/v1/tickets/', include(('tickets.api_urls', 'api_tickets'))),
-    path('api/v1/notifications/', include(('notifications.api_urls', 'api_notifications'))),
-    path('api/v1/reports/', include(('reports.api_urls', 'api_reports'))),
-    path('api/v1/dashboard/', include(('dashboard.api_urls', 'api_dashboard'))),
 
     # OpenAPI / Swagger / ReDoc dokümantasyonu (drf-spectacular)
     path('api/v1/schema/', SpectacularAPIView.as_view(), name='schema'),

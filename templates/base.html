@@ -1,6 +1,7 @@
 {% load static i18n %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE|default:'tr' }}" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,6 +36,7 @@
         })();
     </script>
 </head>
+
 <body class="d-flex flex-column min-vh-100">
 
     <!-- Navbar -->
@@ -56,67 +58,67 @@
                         </a>
                     </li>
                     {% if user.is_authenticated %}
-                        {% if user.role == 'ADMIN' %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'identity:user_list' %}">
-                                    <i class="bi bi-people me-1"></i>{% trans "Kullanıcılar" %}
-                                </a>
-                            </li>
+                    {% if user.role == 'ADMIN' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'identity:user_list' %}">
+                            <i class="bi bi-people me-1"></i>{% trans "Kullanıcılar" %}
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if user.role == 'MANAGER' or user.role == 'ADMIN' %}
+                    <li class="nav-item">
+                        {% if user.role == 'MANAGER' %}
+                        <a class="nav-link"
+                            href="{% if user.department %}{% url 'departments:department_detail' user.department.id %}{% else %}#{% endif %}">
+                            <i class="bi bi-building me-1"></i>{% trans "Departmanım" %}
+                        </a>
+                        {% else %}
+                        <a class="nav-link" href="{% url 'departments:department_list' %}">
+                            <i class="bi bi-building me-1"></i>{% trans "Departmanlar" %}
+                        </a>
                         {% endif %}
-                        {% if user.role == 'MANAGER' or user.role == 'ADMIN' %}
-                            <li class="nav-item">
-                                {% if user.role == 'MANAGER' %}
-                                    <a class="nav-link" href="{% if user.department %}{% url 'departments:department_detail' user.department.id %}{% else %}#{% endif %}">
-                                        <i class="bi bi-building me-1"></i>{% trans "Departmanım" %}
-                                    </a>
-                                {% else %}
-                                    <a class="nav-link" href="{% url 'departments:department_list' %}">
-                                        <i class="bi bi-building me-1"></i>{% trans "Departmanlar" %}
-                                    </a>
-                                {% endif %}
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'reports:dashboard' %}">
-                                    <i class="bi bi-bar-chart-line me-1"></i>{% trans "Raporlar" %}
-                                </a>
-                            </li>
-                        {% endif %}
-                        {% if user.role == 'ADMIN' %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'tickets:audit_log' %}">
-                                    <i class="bi bi-clock-history me-1"></i>{% trans "İşlem Geçmişi" %}
-                                </a>
-                            </li>
-                        {% endif %}
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reports:dashboard' %}">
+                            <i class="bi bi-bar-chart-line me-1"></i>{% trans "Raporlar" %}
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if user.role == 'ADMIN' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tickets:audit_log' %}">
+                            <i class="bi bi-clock-history me-1"></i>{% trans "İşlem Geçmişi" %}
+                        </a>
+                    </li>
+                    {% endif %}
                     {% endif %}
                 </ul>
                 <ul class="navbar-nav align-items-center">
                     <!-- Dil Seçici -->
                     <li class="nav-item dropdown me-1">
-                        <a class="nav-link" href="#" id="langMenu"
-                           data-bs-toggle="dropdown" aria-expanded="false"
-                           title="{% trans 'Dil Seçimi' %}">
+                        <a class="nav-link" href="#" id="langMenu" data-bs-toggle="dropdown" aria-expanded="false"
+                            title="{% trans 'Dil Seçimi' %}">
                             <i class="bi bi-globe2"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langMenu">
                             {% get_available_languages as LANGUAGES %}
                             {% get_language_info_list for LANGUAGES as languages %}
                             {% for lang in languages %}
-                                <li>
-                                    <form action="{% url 'set_language' %}" method="post" class="m-0">
-                                        {% csrf_token %}
-                                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
-                                        <input name="language" type="hidden" value="{{ lang.code }}">
-                                        <button type="submit"
-                                                class="dropdown-item {% if lang.code == LANGUAGE_CODE %}active{% endif %}">
-                                            {% if lang.code == 'tr' %}🇹🇷{% else %}🇬🇧{% endif %}
-                                            {{ lang.name_local|capfirst }}
-                                            {% if lang.code == LANGUAGE_CODE %}
-                                                <i class="bi bi-check2 ms-2"></i>
-                                            {% endif %}
-                                        </button>
-                                    </form>
-                                </li>
+                            <li>
+                                <form action="{% url 'set_language' %}" method="post" class="m-0">
+                                    {% csrf_token %}
+                                    <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                                    <input name="language" type="hidden" value="{{ lang.code }}">
+                                    <button type="submit"
+                                        class="dropdown-item {% if lang.code == LANGUAGE_CODE %}active{% endif %}">
+                                        {% if lang.code == 'tr' %}{% else %}{% endif %}
+                                        {{ lang.name_local|capfirst }}
+                                        {% if lang.code == LANGUAGE_CODE %}
+                                        <i class="bi bi-check2 ms-2"></i>
+                                        {% endif %}
+                                    </button>
+                                </form>
+                            </li>
                             {% endfor %}
                         </ul>
                     </li>
@@ -127,32 +129,34 @@
                         </button>
                     </li>
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link position-relative" href="{% url 'notifications:notification_list' %}">
-                                <i class="bi bi-bell"></i>
-                                {% if unread_notification_count %}
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
-                                        {{ unread_notification_count }}
-                                    </span>
-                                {% endif %}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'identity:profile' %}">
-                                <i class="bi bi-person-circle me-1"></i>{% trans "Profil" %}
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'identity:logout' %}">
-                                <i class="bi bi-box-arrow-right me-1"></i>{% trans "Çıkış" %}
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{% url 'notifications:notification_list' %}">
+                            <i class="bi bi-bell"></i>
+                            {% if unread_notification_count %}
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                style="font-size: 0.6rem;">
+                                {{ unread_notification_count }}
+                            </span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'identity:profile' %}">
+                            <i class="bi bi-person-circle me-1"></i>{% trans "Profil" %}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'identity:logout' %}">
+                            <i class="bi bi-box-arrow-right me-1"></i>{% trans "Çıkış" %}
+                        </a>
+                    </li>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'identity:login' %}">
-                                <i class="bi bi-box-arrow-in-right me-1"></i>{% trans "Giriş" %}
-                            </a>
-                        </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'identity:login' %}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>{% trans "Giriş" %}
+                        </a>
+                    </li>
                     {% endif %}
                 </ul>
             </div>
@@ -161,14 +165,14 @@
 
     <!-- Bildirim mesajları -->
     {% if messages %}
-        <div class="container mt-3">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
+        {% endfor %}
+    </div>
     {% endif %}
 
     <!-- Ana içerik -->
@@ -222,4 +226,5 @@
 
     {% block extra_js %}{% endblock %}
 </body>
+
 </html>

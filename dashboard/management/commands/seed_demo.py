@@ -245,7 +245,7 @@ class Command(BaseCommand):
         if created:
             admin.set_password('admin123')
             admin.save()
-            self.stdout.write(f'  + admin oluşturuldu (admin/admin123)')
+            self.stdout.write('  + admin oluşturuldu (admin/admin123)')
         return admin
 
     def _create_departments(self):

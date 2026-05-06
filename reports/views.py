@@ -1,7 +1,6 @@
 import calendar
 import csv
 import io
-import math
 from datetime import date, timedelta
 
 from django.contrib.auth.decorators import login_required
@@ -16,7 +15,7 @@ import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment
 from weasyprint import HTML
 
-from tickets.models import Ticket, Status, Priority, TicketHistory
+from tickets.models import Ticket, Status, TicketHistory
 from departments.models import Department, Category
 from identity.models import User, Role
 from identity.views import ManagerOrAdminRequiredMixin

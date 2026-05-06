@@ -119,7 +119,7 @@ USE_I18N = True
 USE_TZ = True
 
 # Desteklenen diller (navbar dil seçici için)
-from django.utils.translation import gettext_lazy as _  # noqa: E402
+from django.utils.translation import gettext_lazy as _
 
 LANGUAGES = [
     ('tr', _('Türkçe')),

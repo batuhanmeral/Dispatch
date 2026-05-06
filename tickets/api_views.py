@@ -14,7 +14,7 @@ from identity.models import Role, User
 from notifications.models import Notification
 
 from .filters import TicketFilter
-from .models import Ticket, TicketComment, Status as TicketStatus, Priority, TicketHistory
+from .models import Ticket, TicketComment, Status as TicketStatus
 from .serializers import (
     TicketListSerializer, TicketDetailSerializer,
     TicketCreateSerializer, TicketUpdateSerializer,
@@ -66,9 +66,12 @@ class TicketListCreateAPIView(ListCreateAPIView):
         return qs.filter(sender=user)
 
     def perform_create(self, serializer):
-        # sender otomatik atanır, durum OPEN
-        ticket = serializer.save(sender=self.request.user, status=TicketStatus.OPEN)
-        log_ticket_action(ticket, self.request.user, 'Bilet oluşturuldu.')
+        user = self.request.user
+        # Mikroservis (ADMIN) ise payload'da gelen sender'ı kullan, değilse request.user
+        sender = serializer.validated_data.pop('sender', None) if user.role == Role.ADMIN else None
+        sender = sender or user
+        ticket = serializer.save(sender=sender, status=TicketStatus.OPEN)
+        log_ticket_action(ticket, user, 'Bilet oluşturuldu.')
 
 
 # Bilet Detay, Güncelleme ve Silme
@@ -104,10 +107,13 @@ class TicketDetailAPIView(RetrieveUpdateDestroyAPIView):
         user = self.request.user
         ticket = self.get_object()
 
-        # Güncelleme yetkisi: sender (OPEN) veya Admin
+        # Güncelleme yetkisi: sender (OPEN) veya Admin (Mikroservis)
         if user.role != Role.ADMIN:
             if ticket.sender != user or ticket.status != TicketStatus.OPEN:
                 raise PermissionDenied('Sadece açık durumdaki kendi biletlerinizi güncelleyebilirsiniz.')
+            # Normal kullanıcı status veya assigned_to değiştiremez
+            serializer.validated_data.pop('status', None)
+            serializer.validated_data.pop('assigned_to', None)
 
         serializer.save()
         log_ticket_action(ticket, user, 'Bilet güncellendi.')
@@ -338,7 +344,7 @@ class TicketCommentListCreateAPIView(ListCreateAPIView):
         elif ticket.sender != user:
             raise PermissionDenied('Bu bilete yorum yapamazsınız.')
 
-        comment = serializer.save(ticket=ticket, author=user)
+        serializer.save(ticket=ticket, author=user)
 
         # Talep sahibi yorum yazdıysa personele bildir; personel yazdıysa talep sahibine bildir
         recipient = ticket.assigned_to if user == ticket.sender else ticket.sender
